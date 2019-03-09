@@ -1,4 +1,6 @@
 # Byte-compiled / optimized / DLL files
+__pycache__
+/__pycache__
 __pycache__/
 *.py[cod]
 *$py.class
@@ -109,3 +111,5 @@ venv.bak/
 db_conn.json
 __pycache__/posts.cpython-36.pyc
 __pycache__/data_functions.cpython-36.pyc
+.vscode
+/.vscode
