@@ -6,10 +6,29 @@
     Dashboard
     <br>
     <small>
-        Oh, hi {{session.username}}!
+        oh, hi {{session.username}}!
     </small>
 </h1>
-
-<a href="/add_post" class="btn btn-success">Add post</a>
 <hr>
+<a href="/add_post" class="btn btn-success ">Add post</a>
+
+<table class="table table-striped">
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th></th>
+        <th></th>
+    </tr>
+    {% for post in posts %}
+    <tr>
+        <td>{{post.title}}</td>
+        <td>{{post.author}}</td>
+        <td>{{post.Date}}</td>
+        <td><a href="edit_post/{{post._id}}" class="btn btn-primary pull-right">Edit</a></td>
+        <td><a href="#" class="btn btn-danger">Delete</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
 {% endblock %}

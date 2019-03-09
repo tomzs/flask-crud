@@ -76,4 +76,32 @@ def create_post(author, title, body):
         }
     )
     print(f"Post {post} by {author} added")
+    client.close()
     return True
+
+
+# Get the user specific posts
+
+def get_user_posts(username):
+    users = db.users
+    posts = db.posts
+
+    spec_user = users.find_one({'username': username})
+    user_post_ids = []
+    for key, val in spec_user.items():
+        if key == 'posts':
+            user_post_ids = val
+    user_posts = posts.find({"_id": {"$in": user_post_ids}})
+
+    return user_posts
+
+# ToDo: Merge get_all_posts and get_user_posts together
+# with username being an optional parameter
+
+
+# Get all posts
+def get_all_posts():
+    posts = db.posts
+    all_posts = posts.find({})
+    client.close()
+    return all_posts

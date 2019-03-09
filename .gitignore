@@ -104,6 +104,8 @@ venv.bak/
 .mypy_cache/
 
 
-# Mongo's connection
+
 
 db_conn.json
+__pycache__/posts.cpython-36.pyc
+__pycache__/data_functions.cpython-36.pyc
