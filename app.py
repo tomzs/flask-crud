@@ -4,7 +4,7 @@ from flask import url_for, session, logging, request
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from data_functions import register_user, check_user, get_password_hash
-from data_functions import create_post, get_user_posts, get_all_posts, get_post
+from data_functions import create_post, get_user_posts, get_all_posts, get_post, edit_post, delete_post
 from functools import wraps
 import json
 
@@ -145,6 +145,42 @@ def add_post():
         return redirect(url_for('dashboard'))
 
     return render_template('add_post.html', form=form)
+
+
+@app.route('/edit_post/<string:id>', methods=["GET", "POST"])
+@is_logged_in
+def update_post(id):
+
+    post = get_post(id)
+
+    form = PostForm(request.form)
+
+    form.title.data = post['title']
+    form.body.data = post['body']
+
+    if request.method == "POST" and form.validate():
+        title = request.form['title']
+        body = request.form['body']
+
+        edit_post(id, title, body)
+
+        flash("Post was updated succesfully!", "success")
+
+        return redirect(url_for('dashboard'))
+
+    return render_template('edit_post.html', form=form)
+
+
+@app.route('/delete_post/<string:id>', methods=["POST"])
+@is_logged_in
+def remove_post(id):
+    delete_post(id)
+    flash("Post deleted!", 'info')
+    return redirect(url_for('dashboard'))
+
+
+
+
 
 
 if __name__ == "__main__":

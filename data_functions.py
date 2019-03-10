@@ -93,7 +93,7 @@ def get_user_posts(username):
         if key == 'posts':
             user_post_ids = val
     user_posts = posts.find({"_id": {"$in": user_post_ids}})
-
+    client.close()
     return user_posts
 
 # ToDo: Merge get_all_posts and get_user_posts together
@@ -111,5 +111,28 @@ def get_all_posts():
 def get_post(id):
     posts = db.posts
     post_result = posts.find_one({"_id": ObjectId(id)})
-
+    client.close()
     return post_result
+
+# Edit post by _id
+
+def edit_post(id, title, body):
+    posts = db.posts
+
+    _id = {"_id": ObjectId(id)}
+
+    updated_content = {
+        "$set": {
+            "title": title,
+            "body": body
+        }
+    }
+
+    posts.update_one(_id, updated_content)
+    client.close()
+
+def delete_post(id):
+    posts = db.posts
+    posts.delete_one({'_id': ObjectId(id)})
+    client.close()
+

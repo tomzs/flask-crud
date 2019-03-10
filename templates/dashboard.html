@@ -26,7 +26,12 @@
         <td>{{post.author}}</td>
         <td>{{post.date}}</td>
         <td><a href="edit_post/{{post._id}}" class="btn btn-primary pull-right">Edit</a></td>
-        <td><a href="#" class="btn btn-danger">Delete</a></td>
+        <td>
+            <form action="{{url_for('remove_post', id=post._id)}}" method="POST">
+                <input type="hidden" name="_method" value="Delete">
+                <input type="submit" name="" value="Delete" class="btn btn-danger">
+            </form>
+        </td>
     </tr>
     {% endfor %}
 </table>
