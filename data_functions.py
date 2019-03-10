@@ -11,20 +11,19 @@ with open("db_conn.json") as dbi:
 db_user = db_info["username"]
 db_pass = db_info["password"]
 db_cluster = db_info["cluster"]
-
+# MongoDB Cursor
 client = pymongo.MongoClient(f"mongodb+srv://{db_user}:{db_pass}@{db_cluster}")
 db = client.learning
+users = db.users
+posts = db.posts
 
 # Get the current date
 today = date.today()
-
 # Format date
 date = today.strftime("%d/%m/%Y")
 
-
 # Check if user exists, used for login, registration.
 def check_user(username):
-    users = db.users
     user_exists = users.find_one({'username': username})
     client.close()
     if user_exists is None:
@@ -34,10 +33,8 @@ def check_user(username):
         print(f"Check for user: Exists")
         return False
 
-
 # Creates a new User, does not check for existing users.
 def register_user(name, email, username, password):
-    users = db.users
     users.insert({
         'name': name,
         'username': username,
@@ -47,10 +44,8 @@ def register_user(name, email, username, password):
     print(f"User {username} registered")
     client.close()
 
-
 # Returns user's stored hash
 def get_password_hash(username):
-    users = db.users
     spec_user = users.find_one({"username": username})
     client.close()
     hashed = ""
@@ -59,11 +54,8 @@ def get_password_hash(username):
             hashed = val
     return hashed
 
-
 # Make post and and update user with
 def create_post(author, title, body):
-
-    posts = db.posts
     post = posts.insert({
         'author': author,
         'title': title,
@@ -80,13 +72,8 @@ def create_post(author, title, body):
     client.close()
     return True
 
-
 # Get the user specific posts
-
 def get_user_posts(username):
-    users = db.users
-    posts = db.posts
-
     spec_user = users.find_one({'username': username})
     user_post_ids = []
     for key, val in spec_user.items():
@@ -96,43 +83,35 @@ def get_user_posts(username):
     client.close()
     return user_posts
 
-# ToDo: Merge get_all_posts and get_user_posts together
-# with username being an optional parameter
-
+# Can merge thses two into one.
 
 # Get all posts
 def get_all_posts():
-    posts = db.posts
     all_posts = posts.find({})
     client.close()
     return all_posts
 
+
 # Get specific post by bson _id
 def get_post(id):
-    posts = db.posts
     post_result = posts.find_one({"_id": ObjectId(id)})
     client.close()
     return post_result
 
 # Edit post by _id
-
 def edit_post(id, title, body):
-    posts = db.posts
-
     _id = {"_id": ObjectId(id)}
-
     updated_content = {
         "$set": {
             "title": title,
             "body": body
         }
     }
-
     posts.update_one(_id, updated_content)
     client.close()
 
+# Delete post by _id
 def delete_post(id):
-    posts = db.posts
     posts.delete_one({'_id': ObjectId(id)})
     client.close()
 

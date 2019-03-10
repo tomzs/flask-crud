@@ -8,22 +8,23 @@ from data_functions import create_post, get_user_posts, get_all_posts, get_post,
 from functools import wraps
 import json
 
+
 app = Flask(__name__)
 SECRET_KEY = ""
 with open("db_conn.json") as dbc:
     SETTINGS = json.load(dbc)
 
-
+# Index route
 @app.route('/')
 def index():
     return render_template("home.html")
 
-
+# About route
 @app.route('/about')
 def about():
     return render_template("about.html")
 
-
+# Posts route, shows every post in db.
 @app.route('/posts')
 def posts_page():
     results = get_all_posts()
@@ -34,13 +35,13 @@ def posts_page():
         msg = "No articles found"
         return render_template('posts.html', msg=msg)
 
-
+# Post route, shows specific post.
 @app.route('/post/<string:id>/')
 def post_page(id):
     target_post = get_post(id)
     return render_template("post.html", post = target_post)
 
-
+# Register form using WTForms
 class RegisterForm(Form):
     name = StringField("Name", [validators.Length(min=1, max=32)])
     username = StringField('Username', [validators.Length(min=3, max=32)])
@@ -51,7 +52,7 @@ class RegisterForm(Form):
     ])
     confirm = PasswordField("Confirm Password")
 
-
+# Register route
 @app.route('/register', methods=["GET", "POST"])
 def register():
     form = RegisterForm(request.form)
@@ -68,7 +69,7 @@ def register():
             flash("Failed to register", 'danger')
     return render_template('register.html', form=form)
 
-
+# Login Route
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -93,7 +94,7 @@ def login():
             return render_template('login.html', error=error)
     return render_template('login.html')
 
-
+# Checks if user is logged in by checking Flask session.
 def is_logged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -104,14 +105,14 @@ def is_logged_in(f):
             return redirect(url_for('login'))
     return wrap
 
-
+# Logout route
 @app.route('/logout')
 def logout():
     session.clear()
     flash("You've logged out!", 'success')
     return redirect(url_for('login'))
 
-
+# Dashboard route, lets user create, edit and delete posts.
 @app.route('/dashboard')
 @is_logged_in
 def dashboard():
@@ -124,12 +125,12 @@ def dashboard():
         msg = "No articles found"
         return render_template('dashboard.html', msg=msg)
 
-
+# WTForm for Post.
 class PostForm(Form):
     title = StringField("Title", [validators.Length(min=1, max=200)])
     body = TextAreaField('Body', [validators.Length(min=25)])
 
-
+# Add post route
 @app.route('/add_post', methods=["GET", "POST"])
 @is_logged_in
 def add_post():
@@ -146,7 +147,7 @@ def add_post():
 
     return render_template('add_post.html', form=form)
 
-
+# Edit post route
 @app.route('/edit_post/<string:id>', methods=["GET", "POST"])
 @is_logged_in
 def update_post(id):
@@ -161,26 +162,19 @@ def update_post(id):
     if request.method == "POST" and form.validate():
         title = request.form['title']
         body = request.form['body']
-
         edit_post(id, title, body)
-
         flash("Post was updated succesfully!", "success")
-
         return redirect(url_for('dashboard'))
 
     return render_template('edit_post.html', form=form)
 
-
+# Delete post route
 @app.route('/delete_post/<string:id>', methods=["POST"])
 @is_logged_in
 def remove_post(id):
     delete_post(id)
     flash("Post deleted!", 'info')
     return redirect(url_for('dashboard'))
-
-
-
-
 
 
 if __name__ == "__main__":
