@@ -1,7 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1 class="text-center">{{post._id}}</h1>
-
+<h1 class="text-center">{{post.title}} <br>
+    <small class="text-muted">By {{post.author}} on {{post.date}}</small>
+</h1>
+<hr>
+<div>
+    {{post.body | safe}}
+</div>
 
 {% endblock %}

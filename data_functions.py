@@ -3,6 +3,7 @@ import datetime
 import json
 
 from datetime import date
+from bson import ObjectId
 
 with open("db_conn.json") as dbi:
     db_info = json.load(dbi)
@@ -105,3 +106,10 @@ def get_all_posts():
     all_posts = posts.find({})
     client.close()
     return all_posts
+
+# Get specific post by bson _id
+def get_post(id):
+    posts = db.posts
+    post_result = posts.find_one({"_id": ObjectId(id)})
+
+    return post_result

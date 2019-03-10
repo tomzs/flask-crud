@@ -4,7 +4,7 @@ from flask import url_for, session, logging, request
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from data_functions import register_user, check_user, get_password_hash
-from data_functions import create_post, get_user_posts, get_all_posts
+from data_functions import create_post, get_user_posts, get_all_posts, get_post
 from functools import wraps
 import json
 
@@ -37,7 +37,8 @@ def posts_page():
 
 @app.route('/post/<string:id>/')
 def post_page(id):
-    return render_template("post.html", id=id)
+    target_post = get_post(id)
+    return render_template("post.html", post = target_post)
 
 
 class RegisterForm(Form):
